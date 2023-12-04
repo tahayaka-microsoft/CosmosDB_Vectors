@@ -1,18 +1,22 @@
-# CosmosDBでのベクトル検索
+# 座学テキストは[コチラ](./xxx.pdf)
 
-## ベクトル検索とは？
-
-### 埋め込み(Embedding)とは
-
-### 近傍検索とは
-
-### 大量データの中から効率よく近傍検索をする手法
+# CosmosDBでのベクトル検索 実践編
 
 ## ベクトル検索を実行できるMicrosoft Azureの環境
 
+### Azure CosmosDB for Mongo DB API vCore
+- Mongo DB 互換 API
+- VMベースでの提供 = Cosmos DB for PostgreSQLに似ている <-> RUとは異なる
+
 ## Cosmos DB for MongoDB vCoreの機能概略
 
+- Mongo DB 互換 NoSQL
+- Vector Index (IVFFlat/HNSW)
+- Vector Search  
+
 ## Cosmos DB for MongoDB vCoreのサービス作成
+
+
 
 ## Cosmos DB for MongoDB vCoreの基本操作
 
