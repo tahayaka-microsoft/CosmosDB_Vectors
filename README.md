@@ -5,7 +5,8 @@
 ### Azure CosmosDB for Mongo DB API vCore
 - Mongo DB 互換 API
 - VMベースでの提供 = Cosmos DB for PostgreSQLに似ている
-  [Tips!] RUベースのMongoDB APIとは大きく異なる
+> [!TIP]
+> RUベースのMongoDB APIとは大きく異なる
 
 ## Mongo DB 概要
 
