@@ -10,16 +10,29 @@
 
 ## Mongo DB 概要
 
-- JSONもしくはBSON(Binary形式)を保存・抽出するドキュメントデータベース
+- [JSON](https://ja.wikipedia.org/wiki/JavaScript_Object_Notation)もしくは[BSON](https://ja.wikipedia.org/wiki/BSON)を保存・抽出できるドキュメントデータベース
 - インメモリで高速動作
-- データの入出力はAPI(関数)で操作
+- データの入出力はAPI(関数)で操作(=SQLは使えない)
+|操作|対象|関数|備考|
+|---|---|---|---|
+|ドキュメントの登録|一件|db.(col).insertOne()||
+|ドキュメントの登録|複数|db.(col).insertMany()||
+|ドキュメントのクエリ|複数|db.(col).find()||
+|ドキュメントの更新|一件|db.(col).updateOne()||
+|ドキュメントの更新|複数|db.(col).updateMany()||
+
 - 集計パイプライン
 
 ## Cosmos DB for MongoDB vCoreの機能概要
 
 - Mongo DB 互換 NoSQL
-- Vector Index (IVFFlat/HNSW)
-- Vector Search 
+- VMベース、性能クラスを選んで利用
+- ベクトル関連機能
+  - Vector Index (IVFFlat/HNSW)
+    - IVFFlat : 反転ファイルフラットインデックス
+    - HNSW : 階層化探索可能な小世界
+  - Vector Search
+    - $Searchの"CosmosSearch"機能で実現 
 
 ## Cosmos DB for MongoDB vCoreのサービス作成
 
