@@ -13,6 +13,7 @@
 - [JSON](https://ja.wikipedia.org/wiki/JavaScript_Object_Notation)もしくは[BSON](https://ja.wikipedia.org/wiki/BSON)を保存・抽出できるドキュメントデータベース
 - インメモリで高速動作
 - データの入出力はAPI(関数)で操作(=SQLは使えない)
+
 |操作|対象|関数|備考|
 |---|---|---|---|
 |ドキュメントの登録|一件|db.(col).insertOne()||
