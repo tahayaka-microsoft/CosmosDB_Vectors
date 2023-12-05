@@ -1,32 +1,45 @@
 座学テキストは[コチラ](./xxx.pdf)
 
-# CosmosDBでのベクトル検索 実践編 (Azure Cosmos DB for MongoDB vCore)
-
-### Azure CosmosDB for Mongo DB API vCore
-- Mongo DB 互換 API
-- VMベースでの提供 = Cosmos DB for PostgreSQLに似ている
-> [!TIP]
-> RUベースのMongoDB APIとは大きく異なる
+# CosmosDBでのベクトル検索 実践編 <BR> (Azure Cosmos DB for MongoDB vCore)
 
 ## Mongo DB 概要
 
-- [JSON](https://ja.wikipedia.org/wiki/JavaScript_Object_Notation)もしくは[BSON](https://ja.wikipedia.org/wiki/BSON)を保存・抽出できるドキュメントデータベース
+- [JSON](https://ja.wikipedia.org/wiki/JavaScript_Object_Notation)もしくは[BSON](https://ja.wikipedia.org/wiki/BSON)を保存・抽出できるドキュメントデータベース&NoSQLデータストア
 - インメモリで高速動作
 - データの入出力はAPI(関数)で操作(=SQLは使えない)
+- 並列処理対応
+- 集計パイプラインによるわかりやすい集計・データ処理記述
 
+## Cosmos DBファミリーでのMongoDB API
 
-- 集計パイプライン
+### Mongo DB API (RUベース)
+
+- CosmosDB for NoSQLと同一のアーキテクチャーを持つ
+- データの読み書きに関してはMongoDBの関数が利用できる(互換性が高い)
+- RUの増減で処理キャパシティが変わる。オーバー分はHTTP429が返る。
+- 内部的にはマスター以外に3つのレプリカを持つため可用性が高い
+- プロビジョニングされたRUとストレージの合算
+
+### Mongo DB vCore (vCoreベース)
+
+- CosmosDB for PostgreSQLのように、ノードをデプロイして利用する
+- 基本1node。処理に応じてもう1node足すことができる
+- サーバークラス(Tier)を指定してデプロイする。サーバークラスは以下から選択。
+- HA(高可用性)にすると単純に料金が倍
+- ストレージとコンピュートの合算
 
 ## Cosmos DB for MongoDB vCoreの機能概要
 
-- Mongo DB 互換 NoSQL
-- VMベース、性能クラスを選んで利用
+- Mongo DB **互換** NoSQL (v5.0相当)
+- VMベース。性能クラスを選んで利用 (M20~M100)
+- コンピュート時間とストレージ容量で課金(RUとは異なる)
+- コンピュート・メモリがノード単位で確保されており、計算量があってもエラーにならない
 - ベクトル関連機能
   - Vector Index (IVFFlat/HNSW)
     - IVFFlat : 反転ファイルフラットインデックス
     - HNSW : 階層化探索可能な小世界
   - Vector Search
-    - $Searchの"CosmosSearch"機能で実現 
+    - $Searchの"cosmosSearch"機能で実現 
 
 ## Cosmos DB for MongoDB vCoreのサービス作成
 
@@ -36,6 +49,14 @@
 
 - mongoshインストール
 - mongoshでの操作
+  - 接続
+  - データベース操作
+  - コレクション操作
+  - アイテム操作
+  - 集計パイプライン操作
+ 
+- Pythonでの操作
+  - 利用するパッケージ(motor)のインストール
   - 接続
   - データベース操作
   - コレクション操作
