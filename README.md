@@ -78,9 +78,9 @@
 - 「リソースの作成」を選択し、検索窓に"Cosmos DB"を入力
 - "Cosmos DB"から「作成」を選択
 <IMG SRC="./assets/SelectCosmosDBFromMarketPlace.png" width=100>
-- MongoDB APIを選択
+- "Azure Cosmos DB for MongoDB"の"Create"を選択
 <IMG SRC="./assets/SelectCosmosDBAPI.png" width=600>
-- Mongo DB API (vCore)を選択
+- "vCore Cluster"を選択
 <IMG SRC="./assets/SelectMongoDBType.png" width=600>
 - 以下の情報を入力
 
