@@ -78,22 +78,10 @@
 
 ## Cosmos DB for MongoDB vCoreの基本操作
 
-※ 以下の操作はAzure Cloud Shell上で実施することを想定する。
-
-- mongoshインストール
-    - 以下のコマンドを入力して"Linux x64"の.tgzパッケージをダウンロードする
-    ```
-    wget https://downloads.mongodb.com/compass/mongosh-2.1.1-linux-x64.tgz
-    ```
-    - 以下のコマンドで解凍する
-    ```
-    tar -xzvf mongosh-2.1.1-linux-x64.tgz
-    ``` 
-    >[TIP!]  
-    >必要に応じてPATHの設定を行う。設定しない場合は起動コマンドはフルパスである必要がある。
-
 - mongoshでの操作
   - 接続
+    - Azure CosmosDB for MonogDB API vCoreのブレードから、「クイックスタート」を選択
+    - "Open MongoDB (vCore) shell"を選択して起動する。パスワード入力が必要。
   - データベース操作
   - コレクション操作
   - アイテム操作
@@ -143,4 +131,17 @@
 |ドキュメントのクエリ|複数|db.(col).find()|||
 |ドキュメントの更新|一件|db.(col).updateOne()|||
 |ドキュメントの更新|複数|db.(col).updateMany()|||
+※ 以下の操作はAzure Cloud Shell上で実施することを想定する。
+- mongoshインストール
+    - 以下のコマンドを入力して"Linux x64"の.tgzパッケージをダウンロードする
+    ```
+    wget https://downloads.mongodb.com/compass/mongosh-2.1.1-linux-x64.tgz
+    ```
+    - 以下のコマンドで解凍する
+    ```
+    tar -xzvf mongosh-2.1.1-linux-x64.tgz
+    ``` 
+    >[TIP!]  
+    >必要に応じてPATHの設定を行う。設定しない場合は起動コマンドはフルパスである必要がある。
+
 -->
