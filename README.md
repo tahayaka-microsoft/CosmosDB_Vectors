@@ -74,7 +74,17 @@
 
 ## Cosmos DB for MongoDB vCoreのサービス作成
 
-- Azure Portalからサービスの作成
+- Azure Portalを開く
+- 「リソースの作成」を選択し、検索窓に"Cosmos DB"を入力
+- "Cosmos DB"から「作成」を選択
+<IMG SRC="./assets/SelectCosmosDBFromMarketPlace.png" width=400>
+- MongoDB APIを選択
+<IMG SRC="./assets/SelectCosmosDBAPI.png" width=400>
+- Mongo DB API (vCore)を選択
+<IMG SRC="./assets/SelectMongoDBType.png" width=400>
+- 以下の情報を入力
+
+
 
 ## Cosmos DB for MongoDB vCoreの基本操作
 
