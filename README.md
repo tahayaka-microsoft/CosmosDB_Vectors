@@ -77,14 +77,25 @@
 - Azure Portalを開く
 - 「リソースの作成」を選択し、検索窓に"Cosmos DB"を入力
 - "Cosmos DB"から「作成」を選択
-<IMG SRC="./assets/SelectCosmosDBFromMarketPlace.png" width=400>
+<IMG SRC="./assets/SelectCosmosDBFromMarketPlace.png" width=100>
 - MongoDB APIを選択
-<IMG SRC="./assets/SelectCosmosDBAPI.png" width=400>
+<IMG SRC="./assets/SelectCosmosDBAPI.png" width=600>
 - Mongo DB API (vCore)を選択
-<IMG SRC="./assets/SelectMongoDBType.png" width=400>
+<IMG SRC="./assets/SelectMongoDBType.png" width=600>
 - 以下の情報を入力
 
+|項目|入力値|備考|
+|---|---|---|
+|Subscription|任意||
+|Resource Group|任意||
+|Cluster Name|任意(一意名)||
+|Free Tier|(チェックされていないこと)||
+|Location|East US|(Japanは近日追加予定)|
 
+<IMG SRC="./assets/CosmosDBAccountSetting1.png" width=600>
+
+- "Configure"を押下
+<IMG SRC="./assets/ClusterTierConfigure.png" width=600>
 
 ## Cosmos DB for MongoDB vCoreの基本操作
 
