@@ -77,7 +77,7 @@
 - Azure Portalを開く
 - 「リソースの作成」を選択し、検索窓に"Cosmos DB"を入力
 - "Cosmos DB"から「作成」を選択
-<IMG SRC="./assets/SelectCosmosDBFromMarketPlace.png" width=100>
+<IMG SRC="./assets/SelectCosmosDBFromMarketPlace.png" width=200>
 - "Azure Cosmos DB for MongoDB"の"Create"を選択
 <IMG SRC="./assets/SelectCosmosDBAPI.png" width=600>
 - "vCore Cluster"を選択
@@ -89,13 +89,36 @@
 |Subscription|任意||
 |Resource Group|任意||
 |Cluster Name|任意(一意名)||
-|Free Tier|(チェックされていないこと)||
+|Free Tier|(チェックされていないこと)|リージョンで一つだけ|
 |Location|East US|(Japanは近日追加予定)|
 
 <IMG SRC="./assets/CosmosDBAccountSetting1.png" width=600>
 
 - "Configure"を押下
-<IMG SRC="./assets/ClusterTierConfigure.png" width=600>
+<IMG SRC="./assets/ClusterTierConfigure.png" width=200>
+
+- Cluster Tier, StrageについてはデフォルトのままでOK
+<IMG SRC="./assets/ConfigureMongoCluster.png" width=200>
+
+- Importantのチェックボックスをチェックする(非HA構成時のリスクを承認)
+<IMG SRC="./assets/ImportantWithoutHA.png" width=200>
+
+- Configureを押下し元の画面に戻る
+
+- 以下の情報を入力する
+
+|項目|入力値|備考|
+|---|---|---|
+|Mongo DB Version|6.0(Default)||
+|Admin username|(任意)||
+|Password|(任意)||
+|Confirm Password|(Passwordと同じ)||
+
+- "Review/Create"を押下
+
+- 内容を確認してCreate
+
+※　デプロイには通常xx分ほど掛かる
 
 ## Cosmos DB for MongoDB vCoreの基本操作
 
