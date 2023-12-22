@@ -54,7 +54,7 @@
 
 ## Cosmos DB for MongoDB vCoreの機能概要
 
-- Mongo DB **互換** NoSQL (v5.0相当)
+- Mongo DB **互換** NoSQL (v6.0相当)
 - VMベース。性能クラスを選んで利用 (M20~M300)
 - コンピュート・メモリがノード単位で確保されており、  
   計算量が多くなってもHTTP429(リクエスト超過エラー)にならない
@@ -89,7 +89,7 @@
 |Subscription|任意||
 |Resource Group|任意||
 |Cluster Name|任意(一意名)||
-|Free Tier|(チェックされていないこと)|リージョンで一つだけ|
+|Free Tier|(チェックされていないこと)|リージョンで一つ<BR>32GBまで|
 |Location|East US|(Japanは近日追加予定)|
 
 <IMG SRC="./assets/CosmosDBAccountSetting1.png" width=600>
@@ -127,9 +127,24 @@
     - Azure CosmosDB for MonogDB API vCoreのブレードから、「クイックスタート」を選択
     - "Open MongoDB (vCore) shell"を選択して起動する。パスワード入力が必要。
   - データベース操作
+    - データベースの一覧表示
+    - データベースの作成
+    - データベースの削除
+    - データベースの変更
   - コレクション操作
+    - コレクションの一覧表示
+    - コレクションの作成
+    - コレクションの削除
+    - コレクションの変更    
   - アイテム操作
+    - アイテムの検索
+    - アイテムの作成
+    - アイテムの更新
+    - アイテムの削除
   - 集計パイプライン操作
+    - カウント
+    - 合計・平均
+    - その他
  
 - Pythonでの操作
   - 利用するパッケージ(motor)のインストール
