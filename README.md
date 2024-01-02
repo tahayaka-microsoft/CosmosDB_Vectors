@@ -12,6 +12,8 @@
 
 ## Cosmos DBファミリーでのMongoDB API
 
+- Cosmos DBにおけるMongo DB APIは2つのデプロイオプションがある
+
 ### Mongo DB API (RUベース)
 
 - CosmosDB for NoSQLと同一のアーキテクチャーを持つ
@@ -54,19 +56,6 @@
 - コンピュート・メモリがノード単位で確保されており、  
   計算量が多くなってもHTTP429(リクエスト超過エラー)にならない
 - ベクトル関連機能
-  - Vector Index (IVFFlat/HNSW)
-    - IVFFlat : 反転ファイルフラットインデックス
-      - クラスタ分割して重心を得る
-      - 重心に対して近傍検索を行い、その後クラスタの全検索を行う
-    - HNSW : 階層化探索可能な小世界 (2023/12プレビュー中)
-      - Layer0に全てのデータ、Layer1は間引いたデータ、Layer2はさらに間引いたデータ...と階層を作る
-      - 階層ないのデータは、近い範囲で連結しグラフを生成する
-      - 最上位レイヤーから近いところを探索してレイヤーを掘り下げていき、目的の近傍データに辿り着く
-  - Vector Search
-    - $Searchの"cosmosSearch"機能で実現
-    - 検索対象のベクトル配列と、データの中でベクトルインデックスがはられている項目名を指定する
-    - パラメータK(上位いくつまで)を指定 
-
 ## Cosmos DB for MongoDB vCoreのサービス作成
 
 - Azure Portalを開く
@@ -160,7 +149,7 @@
         |---|---|---|
         |比較演算子|$eq,$gt,$gte,$in,$lt,$lte,$ne,$nin||
         |論理演算子|$and,$not,$nor,$or||
-        |要素演算子|$exists|$type|
+        |要素演算子|$exists,$type||
         |評価演算子|$expr,$jsonSchema,$mod,$regex,$text,$where||
         |配列演算子|$all,$elemMatch,$size||
         |投影演算子|$,$elemMatch,$meta,$slice||
@@ -175,14 +164,61 @@
 - 練習問題
     1. 以下のドキュメントを作成する
     ```JSON
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "preferences": {
+        "food": "Sushi",
+        "color": "Blue"
+      },
+      "addresses": [
+        {
+          "type": "Home",
+          "postalCode": "123-4567",
+          "state": "California",
+          "city": "Los Angeles",
+          "street": "1234 Palm Street"
+        },
+        {
+          "type": "Work",
+          "postalCode": "987-6543",
+          "state": "California",
+          "city": "San Francisco",
+          "street": "4321 Oak Avenue"
+        }
+      ],
+      "membership": {
+        "level": "Gold",
+        "since": "2015-04-01",
+        "expiration": "2024-03-31"
+      }
+    }
     ```
 
 - Pythonでの操作
   - 利用するパッケージ(motor)のインストール
+  ```python
+    pip install motor
+　```
+
   - サンプルプログラム
 
-
 ## Cosmos DB for MongoDB vCoreでのベクトルデータの取り扱い
+
+  - Vector Index (IVFFlat/HNSW)
+    - IVFFlat : 反転ファイルフラットインデックス
+      - クラスタ分割して重心を得る
+      - 重心に対して近傍検索を行い、その後クラスタの全検索を行う
+    - HNSW : 階層化探索可能な小世界 (2023/12プレビュー中)
+      - Layer0に全てのデータ、Layer1は間引いたデータ、Layer2はさらに間引いたデータ...と階層を作る
+      - 階層ないのデータは、近い範囲で連結しグラフを生成する
+      - 最上位レイヤーから近いところを探索してレイヤーを掘り下げていき、目的の近傍データに辿り着く
+  - Vector Search
+    - $Searchの"cosmosSearch"機能で実現
+    - 検索対象のベクトル配列と、データの中でベクトルインデックスがはられている項目名を指定する
+    - パラメータK(上位いくつまで)を指定 
+
 
 - MongoDB vCoreでのベクトルデータの管理
   1. Mongo DB vCoreのコレクションに対してベクトルインデックスを設定する
