@@ -156,12 +156,15 @@
         |その他演算子|$comment,$rand,$natural||
   - 集計パイプライン操作
     - 集計パイプラインとは？
+        - 集計パイプラインは、`db.collection.aggregate()`で利用されるデータ処理の形態である
+        - 集計パイプラインは、「ステージ」を配列で定義する
+        - ステージは{}に演算子等をもって記述された処理のブロックであり、ステージの結果のドキュメントが次のステージに渡される
     - 集計パターン
         - カウント
         - 合計・平均
         - その他
 
-- 練習問題
+  - 練習問題
     1. 以下のドキュメントを作成する
     ```JSON
     {
@@ -198,14 +201,84 @@
 
 - Pythonでの操作
   - 利用するパッケージ(motor)のインストール
+  
   ```python
-    pip install motor
-　```
+    # asyncio + motor example
+
+    import asyncio
+    import motor.motor_asyncio
+    import os
+
+    # Connect to MongoDB
+    client = motor.motor_asyncio.AsyncIOMotorClient(os.environ['MONGOCONN'])
+    db = client['testdb']
+    collection = db['testcoll']
+
+    async def create_document(document):
+        # Create a new document
+        result = await collection.insert_one(document)
+        print(f"Created document with id: {result.inserted_id}")
+
+    async def read_document(document_id):
+        # Read a document by id
+        document = await collection.find_one({"_id": document_id})
+        if document:
+            print(f"Read document: {document}")
+        else:
+            print("Document not found")
+
+    async def update_document(document_id, update_data):
+        # Update a document by id
+        result = await collection.update_one({"_id": document_id}, {"$set": update_data})
+        if result.modified_count > 0:
+            print("Document updated successfully")
+        else:
+            print("Document not found")
+
+    async def find_document(query):
+        # Find first document that matches the query
+        document = await collection.find_one(query)
+        if document:
+            print(f"Found document: {document}")
+        else:
+            print("Document not found")
+
+    async def delete_document(document_id):
+        # Delete a document by id
+        result = await collection.delete_one({"_id": document_id})
+        if result.deleted_count > 0:
+            print("Document deleted successfully")
+        else:
+            print("Document not found")
+
+    async def main():
+        # Example usage
+        document = {"_id":1,"name": "John Doe", "age": 30}
+        await create_document(document)
+
+        await read_document(document["_id"])
+
+        update_data = {"age": 31}
+        await update_document(document["_id"], update_data)
+
+        await delete_document(document["_id"])
+
+    # Run the event loop
+    if __name__ == "__main__":
+        asyncio.run(main())
+
+  ```
+
 
   - サンプルプログラム
+    motorを利用してMongoDBに接続し、データを登録するサンプルプログラム
+    ```python
+    import motor.motor_asyncio
+   ```
 
 ## Cosmos DB for MongoDB vCoreでのベクトルデータの取り扱い
 
+- ベクトルデータ関連機能
   - Vector Index (IVFFlat/HNSW)
     - IVFFlat : 反転ファイルフラットインデックス
       - クラスタ分割して重心を得る
@@ -218,7 +291,6 @@
     - $Searchの"cosmosSearch"機能で実現
     - 検索対象のベクトル配列と、データの中でベクトルインデックスがはられている項目名を指定する
     - パラメータK(上位いくつまで)を指定 
-
 
 - MongoDB vCoreでのベクトルデータの管理
   1. Mongo DB vCoreのコレクションに対してベクトルインデックスを設定する
@@ -234,8 +306,64 @@
 ### ベクトルデータの格納
 
 - 環境準備
+  - Azure OpenAI Serviceの準備
+    - text-embedding-ada-002をデプロイしておく
+  - 
+
 
 - サンプルアプリ
+```python
+import motor.motor_asyncio
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
+
+# MongoDBの設定
+mongo_conn_str = "your_mongodb_connection_string"  # MongoDBの接続文字列を設定してください
+db_name = "your_db_name"  # データベース名を設定してください
+collection_name = "your_collection_name"  # コレクション名を設定してください
+
+# Azure OpenAIの設定
+azure_key = "your_azure_openai_key"  # Azureのキーを設定してください
+endpoint = "your_openai_endpoint"  # Azure OpenAIのエンドポイントURLを設定してください
+
+# Azure OpenAIのクライアントを生成
+credential = AzureKeyCredential(azure_key)
+text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=credential)
+
+# MongoDB Clientを生成
+client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn_str)
+db = client[db_name]
+collection = db[collection_name]
+
+# Embeddingを取得してMongoDBに保存する非同期関数
+async def store_embedding(text):
+    try:
+        # AzureからEmbeddingを取得する
+        response = text_analytics_client.extract_key_phrases(documents=[text])
+        key_phrases = response[0].key_phrases if response else []
+
+        # EmbeddingとともにテキストをMongoDBに格納
+        document = {
+            'text': text,
+            'embedding': key_phrases
+        }
+        result = await collection.insert_one(document)
+        print(f'Document inserted with id: {result.inserted_id}')
+    except Exception as e:
+        print(f'An error occurred: {e}')
+        
+
+# メインの非同期イベントループ
+async def main():
+    sample_text = "Azure OpenAIのEmbedding APIを使ってみましょう。"
+    await store_embedding(sample_text)
+
+# イベントループを実行
+import asyncio
+if __name__ == '__main__':
+    asyncio.run(main())
+
+```
 
 - ベクトル生成
 
