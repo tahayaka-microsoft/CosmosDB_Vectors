@@ -181,45 +181,16 @@
           ]
         )
         ``` 
+        - 合計・平均
+        ```javascript
+        db.orders.aggregate(
+          [
+              { $group: { _id: null, total: { $sum: '$amount' }, average: { $avg: '$amount' } } }
+          ]
         )
         ```
-        - 合計・平均
         - その他
 
-  - 練習問題
-    1. 以下のドキュメントを作成する
-    ```JSON
-    {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john.doe@example.com",
-      "preferences": {
-        "food": "Sushi",
-        "color": "Blue"
-      },
-      "addresses": [
-        {
-          "type": "Home",
-          "postalCode": "123-4567",
-          "state": "California",
-          "city": "Los Angeles",
-          "street": "1234 Palm Street"
-        },
-        {
-          "type": "Work",
-          "postalCode": "987-6543",
-          "state": "California",
-          "city": "San Francisco",
-          "street": "4321 Oak Avenue"
-        }
-      ],
-      "membership": {
-        "level": "Gold",
-        "since": "2015-04-01",
-        "expiration": "2024-03-31"
-      }
-    }
-    ```
 
 - Pythonでの操作
   - 利用するパッケージ(motor)のインストール
@@ -441,5 +412,39 @@ if __name__ == '__main__':
     ```
     >[TIP!]
     >必要に応じてPATHの設定を行う。設定しない場合は起動コマンドはフルパスである必要がある。
+  - 練習問題
+    1. 以下のドキュメントを作成する
+    ```JSON
+    {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "preferences": {
+        "food": "Sushi",
+        "color": "Blue"
+      },
+      "addresses": [
+        {
+          "type": "Home",
+          "postalCode": "123-4567",
+          "state": "California",
+          "city": "Los Angeles",
+          "street": "1234 Palm Street"
+        },
+        {
+          "type": "Work",
+          "postalCode": "987-6543",
+          "state": "California",
+          "city": "San Francisco",
+          "street": "4321 Oak Avenue"
+        }
+      ],
+      "membership": {
+        "level": "Gold",
+        "since": "2015-04-01",
+        "expiration": "2024-03-31"
+      }
+    }
+    ```
 
 -->
