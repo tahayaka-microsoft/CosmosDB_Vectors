@@ -134,26 +134,26 @@
     |----|----|----|
     |コレクションの一覧表示|show cols|
     |コレクションの作成|db.createCollection()||
-    |コレクションの変更|db.<コレクション名>.renameCollection()||
-    |コレクションの削除|db.<コレクション名>.drop()||
+    |コレクションの変更|db.<colls>.renameCollection()||
+    |コレクションの削除|db.<colls>.drop()||
   - アイテム操作
     |操作|コマンド|備考|
     |----|----|----|
-    |アイテムの作成|db.<コレクション名>.insertOne()/insertMany()||
-    |アイテムの検索|db.<コレクション名>.find()||
-    |アイテムの更新|db.<コレクション名>.updateOne()/updateMany()||
-    |アイテムの削除|db.<コレクション名>.deleteOne()/deleteMany()||
+    |アイテムの作成|db.<colls>.insertOne()/insertMany()||
+    |アイテムの検索|db.<colls>.find()||
+    |アイテムの更新|db.<colls>.updateOne()/updateMany()||
+    |アイテムの削除|db.<colls>.deleteOne()/deleteMany()||
   - 演算子
     - 演算子はfind()などでフィルタ条件を作成する時に利用する
         |演算子種類|演算子(例)|備考|
         |---|---|---|
-        |比較演算子|$eq,$gt,$gte,$in,$lt,$lte,$ne,$nin||
-        |論理演算子|$and,$not,$nor,$or||
-        |要素演算子|$exists,$type||
-        |評価演算子|$expr,$jsonSchema,$mod,$regex,$text,$where||
-        |配列演算子|$all,$elemMatch,$size||
-        |投影演算子|$,$elemMatch,$meta,$slice||
-        |その他演算子|$comment,$rand,$natural||
+        |比較演算子|\$eq,\$gt,\$gte,\$in,\$lt,\$lte,\$ne,\$nin||
+        |論理演算子|\$and,\$not,\$nor,\$or||
+        |要素演算子|\$exists,\$type||
+        |評価演算子|\$expr,\$jsonSchema,\$mod,\$regex,\$text,\$where||
+        |配列演算子|\$all,\$elemMatch,\$size||
+        |投影演算子|\$,\$elemMatch,\$meta,\$slice||
+        |その他演算子|\$comment,\$rand,\$natural||
   - 集計パイプライン操作
     - 集計パイプラインとは？
         - 集計パイプラインは、`db.collection.aggregate()`で利用されるデータ処理の形態である
