@@ -201,82 +201,107 @@
 
 - Pythonでの操作
   - 利用するパッケージ(motor)のインストール
-  
+
   ```python
-    # asyncio + motor example
-
-    import asyncio
     import motor.motor_asyncio
-    import os
-
-    # Connect to MongoDB
-    client = motor.motor_asyncio.AsyncIOMotorClient(os.environ['MONGOCONN'])
-    db = client['testdb']
-    collection = db['testcoll']
-
-    async def create_document(document):
-        # Create a new document
-        result = await collection.insert_one(document)
-        print(f"Created document with id: {result.inserted_id}")
-
-    async def read_document(document_id):
-        # Read a document by id
-        document = await collection.find_one({"_id": document_id})
-        if document:
-            print(f"Read document: {document}")
-        else:
-            print("Document not found")
-
-    async def update_document(document_id, update_data):
-        # Update a document by id
-        result = await collection.update_one({"_id": document_id}, {"$set": update_data})
-        if result.modified_count > 0:
-            print("Document updated successfully")
-        else:
-            print("Document not found")
-
-    async def find_document(query):
-        # Find first document that matches the query
-        document = await collection.find_one(query)
-        if document:
-            print(f"Found document: {document}")
-        else:
-            print("Document not found")
-
-    async def delete_document(document_id):
-        # Delete a document by id
-        result = await collection.delete_one({"_id": document_id})
-        if result.deleted_count > 0:
-            print("Document deleted successfully")
-        else:
-            print("Document not found")
-
-    async def main():
-        # Example usage
-        document = {"_id":1,"name": "John Doe", "age": 30}
-        await create_document(document)
-
-        await read_document(document["_id"])
-
-        update_data = {"age": 31}
-        await update_document(document["_id"], update_data)
-
-        await delete_document(document["_id"])
-
-    # Run the event loop
-    if __name__ == "__main__":
-        asyncio.run(main())
-
   ```
 
 
   - サンプルプログラム
     motorを利用してMongoDBに接続し、データを登録するサンプルプログラム
-    ```python
-    import motor.motor_asyncio
-   ```
 
-## Cosmos DB for MongoDB vCoreでのベクトルデータの取り扱い
+  ```python
+  # asyncio + motor example
+
+  import asyncio
+  import motor.motor_asyncio
+  import os
+
+  # If you run in VSCode/Jupyter/Spyder, 
+  # allow nested loop with nest_asyncio.apply()
+
+  #import nest_asyncio
+  #nest_asyncio.apply()
+
+  # Connect to MongoDB
+  client = motor.motor_asyncio.AsyncIOMotorClient(os.environ['MONGOCONN'])
+  db = client['testdb']
+  collection = db['testcoll']
+
+  # Delete all documents
+
+  async def create_document(document):
+      # Create a new document
+      result = await collection.insert_one(document)
+      print(f"Created document with id: {result.inserted_id}")
+
+  async def read_document(document_id):
+      # Read a document by id
+      document = await collection.find_one({"_id": document_id})
+      if document:
+          print(f"Read document: {document}")
+      else:
+          print("Document not found")
+
+  async def update_document(document_id, update_data):
+      # Update a document by id
+      result = await collection.update_one({"_id": document_id}, {"$set": update_data})
+      if result.modified_count > 0:
+          print("Document updated successfully")
+      else:
+          print("Document not found")
+          
+  async def find_document(query):
+      # Find first document that matches the query
+      cursor = collection.find(query)
+      cnt = 0
+      
+      async for document in cursor:
+          cnt += 1
+          print(f"Found document: {document}")
+          
+      if cnt > 0:
+          print (f"Found {str(cnt)} documents")
+      else:
+          print ("Document not found")
+      
+
+  async def delete_document(document_id):
+      # Delete a document by id
+      result = await collection.delete_one({"_id": document_id})
+      if result.deleted_count > 0:
+          print("Document deleted successfully")
+      else:
+          print("Document not found")
+
+  async def main():
+
+      document = {"_id":1,"name": "John Doe", "age": 30}
+      #await create_document(document)
+      await collection.delete_many({})
+
+      for i in range(10):
+          document["_id"] = i
+          document["name"] = "John Doe" + str(i)
+          document["age"] = 30 + i
+          await create_document(document)
+
+      await read_document(document["_id"])
+
+      update_data = {"age": 31}
+      await update_document(document["_id"], update_data)
+
+      query = {"age":{ "$lt":35 }}
+      await find_document(query)
+
+      await delete_document(document["_id"])
+
+  # Run the event loop
+  if __name__ == "__main__":
+      asyncio.run(main())
+  ```
+
+  ## Cosmos DB for MongoDB vCoreでのベクトルデータの取り扱い
 
 - ベクトルデータ関連機能
   - Vector Index (IVFFlat/HNSW)
