@@ -134,15 +134,15 @@
     |----|----|----|
     |コレクションの一覧表示|show cols|
     |コレクションの作成|db.createCollection()||
-    |コレクションの変更|db.<colls>.renameCollection()||
-    |コレクションの削除|db.<colls>.drop()||
+    |コレクションの変更|db.\<colls\>.renameCollection()||
+    |コレクションの削除|db.\<colls\>.drop()||
   - アイテム操作
     |操作|コマンド|備考|
     |----|----|----|
-    |アイテムの作成|db.<colls>.insertOne()/insertMany()||
-    |アイテムの検索|db.<colls>.find()||
-    |アイテムの更新|db.<colls>.updateOne()/updateMany()||
-    |アイテムの削除|db.<colls>.deleteOne()/deleteMany()||
+    |アイテムの作成|db.\<colls\>.insertOne()/insertMany()||
+    |アイテムの検索|db.\<colls\>.find()||
+    |アイテムの更新|db.\<colls\>.updateOne()/updateMany()||
+    |アイテムの削除|db.\<colls\>.deleteOne()/deleteMany()||
   - 演算子
     - 演算子はfind()などでフィルタ条件を作成する時に利用する
         |演算子種類|演算子(例)|備考|
