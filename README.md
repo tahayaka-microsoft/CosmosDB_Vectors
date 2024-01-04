@@ -156,11 +156,33 @@
         |その他演算子|\$comment,\$rand,\$natural||
   - 集計パイプライン操作
     - 集計パイプラインとは？
-        - 集計パイプラインは、`db.collection.aggregate()`で利用されるデータ処理の形態である
+        - 集計パイプラインは、`db.\<colls\>.aggregate()`で利用されるデータ処理の形態である
         - 集計パイプラインは、「ステージ」を配列で定義する
-        - ステージは{}に演算子等をもって記述された処理のブロックであり、ステージの結果のドキュメントが次のステージに渡される
-    - 集計パターン
-        - カウント
+        - ステージは{}に集計演算子等をもって記述されたフィルターやグループ化、計算処理のブロックであり、ステージの結果のドキュメントが次のステージに渡される
+    - 集計パターンのサンプル
+      - 事前データ作成
+        - 以下のプログラムをmongoshから実行する。
+        ```javascript
+        db.orders.insertMany([
+        { customer_id: 1, amount: 200, status: 'shipped', items: 3 },
+        { customer_id: 2, amount: 150, status: 'processing', items: 1 },
+        { customer_id: 1, amount: 600, status: 'delivered', items: 8 },
+        { customer_id: 3, amount: 300, status: 'shipped', items: 2 },
+        { customer_id: 4, amount: 450, status: 'canceled', items: 5 }
+        ]);
+        ```
+      - 集計パイプラインの実行
+        - フィルタ条件を適用してカウント
+        ```javascript
+        db.orders.aggregate(
+          [
+              { $match: { status: 'shipped' } },
+              { $count: 'shipped_orders' }
+          ]
+        )
+        ``` 
+        )
+        ```
         - 合計・平均
         - その他
 
