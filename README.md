@@ -206,6 +206,21 @@
           - ステージ
             - 集計演算子等をもって記述されたフィルターやグループ化、計算処理のブロック
             - {}で区切られたドキュメントとして定義される
+            - ステージの種類(一部)
+              |ステージ|説明|パラメータ|
+              |---|---|---|
+              |\$match|フィルタ条件を指定する|フィルタ条件|
+              |\$group|グループ化を行う|グループ条件|
+              |\$sort|ソートを行う|ソート項目、方向|
+              |\$limit|結果の上限を指定する|上限数|
+              |\$skip|結果のスキップ数を指定する|スキップ数|
+              |\$project|フィールドの投影を行う|フィールドリスト|
+              |\$unwind|配列を展開する|配列名|
+              |\$lookup|外部コレクションからデータを取得する|対象コレクション、フィールド|
+              |\$count|結果の件数をカウントする|出力フィールド名|
+              |\$addFields|フィールドを追加する|追加フィールド名、式|
+              |\$sample|ランダムにドキュメントを抽出する|サンプルサイズ|
+
     - 集計パターンのサンプル
       - サンプルデータ
         - `find()`のサンプルで作成したデータを利用する
@@ -234,7 +249,7 @@
   - 利用するパッケージ(motor)のインストール
 
   ```python
-    import motor.motor_asyncio
+    pip install motor
   ```
 
 
@@ -350,9 +365,9 @@
 
 - MongoDB vCoreでのベクトルデータの管理
   1. Mongo DB vCoreのコレクションに対してベクトルインデックスを設定する
-  1. テキストデータを準備する
-  1. テキスト部分をEmbedding APIを適用してベクトルに変換する
-  1. 変換したデータをベクトルとしてMongoDB vCoreに登録する
+  2. テキストデータを準備する
+  3. テキスト部分をEmbedding APIを適用してベクトルに変換する
+  4. 変換したデータをベクトルとしてMongoDB vCoreに登録する
 
 - MongoDB vCoreでのベクトル検索の実施
   1. 検索対象となるテキストを得る
@@ -373,7 +388,7 @@ import motor.motor_asyncio
 from openai import AzureOpenAI
 
 # MongoDBの設定
-mongo_conn_str = os.getenv("MONGOCONN")  # MongoDBの接続文字列を設定してください
+mongo_conn_str = os.environ["MONGOCONN"]  # MongoDBの接続文字列を設定してください
 db_name = "db1"  # データベース名を設定してください
 collection_name = "coll_holtest"  # コレクション名を設定してください
 
@@ -382,9 +397,9 @@ model_name = 'embedding01' # OpenAI Studioでデプロイしたモデルの名�
 # Azure OpenAIのクライアントを生成
     
 client = AzureOpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),  
+    api_key=os.environ["OPENAI_API_KEY"],  
     api_version="2023-12-01-preview",
-    azure_endpoint = os.getenv("OPENAI_API_URL")
+    azure_endpoint = os.environ["OPENAI_API_URL"]
 )
 
 # MongoDB Clientを生成
