@@ -331,44 +331,40 @@
 
 - サンプルアプリ
 ```python
+import os
+
 import motor.motor_asyncio
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
+from openai import AzureOpenAI
 
 # MongoDBの設定
-mongo_conn_str = "your_mongodb_connection_string"  # MongoDBの接続文字列を設定してください
-db_name = "your_db_name"  # データベース名を設定してください
-collection_name = "your_collection_name"  # コレクション名を設定してください
+mongo_conn_str = os.getenv("MONGOCONN")  # MongoDBの接続文字列を設定してください
+db_name = "db1"  # データベース名を設定してください
+collection_name = "coll_holtest"  # コレクション名を設定してください
 
-# Azure OpenAIの設定
-azure_key = "your_azure_openai_key"  # Azureのキーを設定してください
-endpoint = "your_openai_endpoint"  # Azure OpenAIのエンドポイントURLを設定してください
+model_name = 'embedding01' # OpenAI Studioでデプロイしたモデルの名前
 
 # Azure OpenAIのクライアントを生成
-credential = AzureKeyCredential(azure_key)
-text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=credential)
+    
+client = AzureOpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),  
+    api_version="2023-12-01-preview",
+    azure_endpoint = os.getenv("OPENAI_API_URL")
+)
 
 # MongoDB Clientを生成
-client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn_str)
-db = client[db_name]
+mongoclient = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn_str)
+db = mongoclient[db_name]
 collection = db[collection_name]
 
 # Embeddingを取得してMongoDBに保存する非同期関数
 async def store_embedding(text):
     try:
-        # AzureからEmbeddingを取得する
-        response = text_analytics_client.extract_key_phrases(documents=[text])
-        key_phrases = response[0].key_phrases if response else []
-
-        # EmbeddingとともにテキストをMongoDBに格納
-        document = {
-            'text': text,
-            'embedding': key_phrases
-        }
-        result = await collection.insert_one(document)
-        print(f'Document inserted with id: {result.inserted_id}')
+        vectors = client.embeddings.create(model=model_name,input=text).data[0].embedding
+        
     except Exception as e:
-        print(f'An error occurred: {e}')
+        print (f"Error when calling embeddings.create():[{e}]")
+
+    await collection.insert_one({vectors:vectors})
         
 
 # メインの非同期イベントループ
@@ -381,7 +377,7 @@ import asyncio
 if __name__ == '__main__':
     asyncio.run(main())
 
-```
+``
 
 - ベクトル生成
 
