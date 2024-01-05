@@ -351,17 +351,57 @@
 
 - ベクトルデータ関連機能
   - Vector Index (IVFFlat/HNSW)
+    - db.runCommand()で作成する
+      - ベクトルデータを格納するフィールド名と、インデックス名を指定する
+      ```javascript
+      db.runCommand(
+        {
+          createIndexes: "<colls>",
+          indexes: [
+            {
+              name: "<indexName>",
+              key: {
+                "vectorContent": "cosmosSearch"
+              },
+              cosmosSearchOptions: {
+                kind: 'vector-ivf',
+                numLists:3,
+                nProbes: 4,
+                similarity: 'COS',
+                dimensions: 3
+              }
+          ]
+        }
+      )
+      ```
     - IVFFlat : 反転ファイルフラットインデックス
       - クラスタ分割して重心を得る
       - 重心に対して近傍検索を行い、その後クラスタの全検索を行う
+      <絵を入れたい>
     - HNSW : 階層化探索可能な小世界 (2023/12プレビュー中)
       - Layer0に全てのデータ、Layer1は間引いたデータ、Layer2はさらに間引いたデータ...と階層を作る
       - 階層ないのデータは、近い範囲で連結しグラフを生成する
       - 最上位レイヤーから近いところを探索してレイヤーを掘り下げていき、目的の近傍データに辿り着く
+      <絵を入れたい>
   - Vector Search
     - $Searchの"cosmosSearch"機能で実現
     - 検索対象のベクトル配列と、データの中でベクトルインデックスがはられている項目名を指定する
     - パラメータK(上位いくつまで)を指定 
+    - mongoshでの実行例
+    ```javascript
+    db.<colls>.aggregate([
+      {
+        $search: {
+          index: 'myIndex',
+          text: {
+            query: [0.1, 0.2, 0.3],
+            path: 'myVectorField'
+          },
+          k: 5
+        }
+      }
+    ])
+    ```
 
 - MongoDB vCoreでのベクトルデータの管理
   1. Mongo DB vCoreのコレクションに対してベクトルインデックスを設定する
@@ -429,8 +469,6 @@ if __name__ == '__main__':
     asyncio.run(main())
 
 ```
-
-- ベクトル生成
 
 ### ベクトル検索の実行
 
