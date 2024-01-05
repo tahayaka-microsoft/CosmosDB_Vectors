@@ -171,7 +171,7 @@
       db.orders.find({"amount":{"$gte":300}})
       ```
       - 結果
-      ```JSON
+      ```text
       [
         {
           _id: ObjectId("6597ae7185a8fea5bb7006bb"),
