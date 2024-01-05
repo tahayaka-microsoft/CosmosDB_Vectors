@@ -132,7 +132,7 @@
   - コレクション操作
     |操作|コマンド|備考|
     |----|----|----|
-    |コレクションの一覧表示|show cols|
+    |コレクションの一覧表示|show collections|
     |コレクションの作成|db.createCollection()||
     |コレクションの変更|db.\<colls\>.renameCollection()||
     |コレクションの削除|db.\<colls\>.drop()||
@@ -154,13 +154,8 @@
         |配列演算子|\$all,\$elemMatch,\$size||
         |投影演算子|\$,\$elemMatch,\$meta,\$slice||
         |その他演算子|\$comment,\$rand,\$natural||
-  - 集計パイプライン操作
-    - 集計パイプラインとは？
-        - 集計パイプラインは、`db.<colls>.aggregate()`で利用されるデータ処理の形態である
-        - 集計パイプラインは、「ステージ」を配列で定義する
-        - ステージは{}に集計演算子等をもって記述されたフィルターやグループ化、計算処理のブロックであり、ステージの結果のドキュメントが次のステージに渡される
-    - 集計パターンのサンプル
-      - 事前データ作成
+    - `db.<colls>.find()`の例
+       - 事前データ作成
         - 以下のプログラムをmongoshから実行する。
         ```javascript
         db.orders.insertMany([
@@ -171,7 +166,43 @@
         { customer_id: 4, amount: 450, status: 'canceled', items: 5 }
         ]);
         ```
-      - 集計パイプラインの実行
+      - クエリ実行
+      ```JavaScript
+      db.orders.find({"amount":{"$gte":300}})
+      ```
+      - 結果
+      ```JSON
+      [
+        {
+          _id: ObjectId("6597ae7185a8fea5bb7006bb"),
+          customer_id: 1,
+          amount: 600,
+          status: 'delivered',
+          items: 8
+        },
+        {
+          _id: ObjectId("6597ae7185a8fea5bb7006bc"),
+          customer_id: 3,
+          amount: 300,
+          status: 'shipped',
+          items: 2
+        },
+        {
+          _id: ObjectId("6597ae7185a8fea5bb7006bd"),
+          customer_id: 4,
+          amount: 450,
+          status: 'canceled',
+          items: 5
+        }
+      ] 
+      ```
+  - 集計パイプライン操作
+    - 集計パイプラインとは？
+        - 集計パイプラインは、`db.<colls>.aggregate()`で利用されるデータ処理の形態である
+        - 集計パイプラインは、「ステージ」を配列で定義する
+        - ステージは{}に集計演算子等をもって記述されたフィルターやグループ化、計算処理のブロックであり、ステージの結果のドキュメントが次のステージに渡される
+    - 集計パターンのサンプル
+     - 集計パイプラインの実行
         - フィルタ条件を適用してカウント
         ```javascript
         db.orders.aggregate(
@@ -326,8 +357,6 @@
 - 環境準備
   - Azure OpenAI Serviceの準備
     - text-embedding-ada-002をデプロイしておく
-  - 
-
 
 - サンプルアプリ
 ```python
