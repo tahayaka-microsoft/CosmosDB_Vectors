@@ -159,11 +159,11 @@
         - 以下のプログラムをmongoshから実行する。
         ```javascript
         db.orders.insertMany([
-        { customer_id: 1, amount: 200, status: 'shipped', items: 3 },
-        { customer_id: 2, amount: 150, status: 'processing', items: 1 },
-        { customer_id: 1, amount: 600, status: 'delivered', items: 8 },
-        { customer_id: 3, amount: 300, status: 'shipped', items: 2 },
-        { customer_id: 4, amount: 450, status: 'canceled', items: 5 }
+          { customer_id: 1, amount: 200, status: 'shipped', items: 3 },
+          { customer_id: 2, amount: 150, status: 'processing', items: 1 },
+          { customer_id: 1, amount: 600, status: 'delivered', items: 8 },
+          { customer_id: 3, amount: 300, status: 'shipped', items: 2 },
+          { customer_id: 4, amount: 450, status: 'canceled', items: 5 }
         ]);
         ```
       - クエリ実行
@@ -251,7 +251,6 @@
   ```python
     pip install motor
   ```
-
 
   - サンプルプログラム
     motorを利用してMongoDBに接続し、データを登録するサンプルプログラム
@@ -363,7 +362,7 @@
       - 最上位レイヤーから近いところを探索してレイヤーを掘り下げていき、目的の近傍データに辿り着く
       <絵を入れたい>
   - ベクトルインデックスの作成
-    - ベクトルインデックスはdb.runCommand()で作成する
+    - ベクトルインデックスはdb.runCommand()の`createIndexes:`で作成する
       ```javascript
       db.runCommand(
         {
@@ -394,13 +393,13 @@
       |similarity|類似度の計算方法|COS/L2/IP|
       |dimensions|ベクトルの次元数|最大2,000<BR>OpenAI Embeddingは1,536|
 
-      vector-ivfのパラメーター
+      `vector-ivf`のパラメーター
       |パラメーター|説明|備考|
       |---|---|---|
       |numLists|クラスタ数|<推奨値><BR>100万ドキュメントまで:ドキュメント数/1,000<BR>それ以上:SQRT(ドキュメント数)<BR>1を設定するとブルートフォース|
       |nProbes|検索で利用される近くのクラスタ数|デフォルト 1|
 
-      vector-hnswのパラメーター
+      `vector-hnsw`のパラメーター
       |パラメーター|説明|備考|
       |---|---|---|
       |M|レイヤーあたりの接続の最大数|デフォルト 16<BR>2 <= m <= 100|
@@ -442,7 +441,9 @@
 
 - 環境準備
   - Azure OpenAI Serviceの準備
-    - text-embedding-ada-002をデプロイしておく
+    - `text-embedding-ada-002`をデプロイしておく
+  - MongoDB vCoreの準備
+    - `db1.coll_holtest`にベクトルインデックスを設定する
 
 - サンプルアプリ
 ```python
