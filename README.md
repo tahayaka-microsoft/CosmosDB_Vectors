@@ -102,7 +102,7 @@
 
 - 内容を確認してCreate
 
-※　デプロイには通常xx分ほど掛かる
+※　デプロイには通常10分ほど掛かる
 
 ## Cosmos DB for MongoDB vCoreの基本操作
 
@@ -111,8 +111,9 @@
     - Azure CosmosDB for MonogDB API vCoreのブレードから、「クイックスタート」を選択
     - "Open MongoDB (vCore) shell"を選択して起動する。パスワード入力が必要。
   - Mongosh基本
-    - メソッドを呼び出す。メソッドの引数にJSONを渡すのが基本。
-    ```mongosh
+    - JavaScriptメソッドを呼び出す。メソッドの引数にJSONを渡すのが基本。
+    
+    ```javascript
     db.<col>.insertOne(
         {
             "_id":1,
@@ -171,7 +172,7 @@
       db.orders.find({"amount":{"$gte":300}})
       ```
       - 結果
-      ```text
+      ```json
       [
         {
           _id: ObjectId("6597ae7185a8fea5bb7006bb"),
@@ -242,8 +243,6 @@
           ]
         )
         ```
-        - その他
-
 
 - Pythonでの操作
   - 利用するパッケージ(motor)のインストール
@@ -349,27 +348,36 @@
   ## Cosmos DB for MongoDB vCoreでのベクトルデータの取り扱い
 
 - ベクトルデータ関連機能
-  - ベクトルインデックス (IVFFlat/HNSW)
-    - ベクトルインデックスがある場合、ベクトルデータの検索が高速になる。ベクトルインデックスがなければブルートフォースで検索する。
+  - ベクトルインデックス
+    - ベクトルインデックスがある場合、ベクトルデータの検索が高速になる。
+    - ベクトルインデックスがなければ全検索(ブルートフォース)で検索する。
   - ベクトルインデックスの種類  
     - IVFFlat : 反転ファイルフラットインデックス
       - クラスタ分割して重心を得る
       - 重心に対して近傍検索を行い、その後クラスタの全検索を行う
-      <絵を入れたい>
+
     - HNSW : 階層化探索可能な小世界 (2023/12プレビュー中)
       - Layer0に全てのデータ、Layer1は間引いたデータ、Layer2はさらに間引いたデータ...と階層を作る
       - 階層ないのデータは、近い範囲で連結しグラフを生成する
       - 最上位レイヤーから近いところを探索してレイヤーを掘り下げていき、目的の近傍データに辿り着く
-      <絵を入れたい>
+    - 比較
+  
+    |観点|IVFFlat|HNSW|全検索|
+    |---|---|---|---|
+    |検索速度|速い|最速|最遅|
+    |検索精度|高|中|最高|
+    |インデックス作成|速い|遅い|不要|
+    |メモリ使用量|比較的小|比較的大|不要|
+  
   - ベクトルインデックスの作成
     - ベクトルインデックスはdb.runCommand()の`createIndexes:`で作成する
       ```javascript
       db.runCommand(
         {
-          createIndexes: "<colls>",
+          createIndexes: "<コレクション名>",
           indexes: [
             {
-              name: "<indexName>",
+              name: "<インデックス名>",
               key: {
                 "vectorContent": "cosmosSearch"
               },
@@ -414,13 +422,19 @@
     ```javascript
     db.<colls>.aggregate([
       {
-        $search: {
-          index: 'myIndex',
-          text: {
-            query: [0.1, 0.2, 0.3],
-            path: 'myVectorField'
-          },
-          k: 5
+        {
+        "$search": {
+          "cosmosSearch": {
+              "vector": <vector_to_search>,
+              "path": "<path_to_property>",
+              "k": <num_results_to_return>,
+            },
+            "returnStoredSource": True }},
+        {
+          "$project": { "<custom_name_for_similarity_score>": {
+                "$meta": "searchScore" },
+                  "document" : "$$ROOT"
+              }
         }
       }
     ])
@@ -498,8 +512,63 @@ if __name__ == '__main__':
 ### ベクトル検索の実行
 
 - サンプルアプリ
+```python
+import os
+import motor.motor_asyncio
+from openai import AzureOpenAI
 
-- ベクトル検索
+# Azure OpenAIの設定
+openai_key = os.environ['OPENAI_API_KEY']
+openai_endpoint = os.environ['OPENAI_API_URL']
+openai = AzureOpenAI(
+    azure_endpoint=openai_endpoint,
+    api_version='2023-12-01-preview',
+    api_key=openai_key)
+
+
+# MongoDBの設定
+mongo_conn = os.environ['MONGOCONN']
+mongo_db_name = 'vectortest'
+mongo_collection_name = 'vectors'
+client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn)
+db = client[mongo_db_name]
+collection = db[mongo_collection_name]
+
+# テキスト入力
+text_input = "アメリカ大統領選挙"
+
+# テキストをベクトルに変換
+vector = openai.embeddings.create(input=text_input,model='embedding01').data[0].embedding
+
+# ベクトルを使用してMongoDBを検索
+# 集計ステージ : query1 .... ベクトル検索
+query1 = {
+      '$search': {
+        "cosmosSearch": {
+            "vector": vector,
+            "path": "embedding",
+            "k": 2,
+          },
+          "returnStoredSource": True 
+      }
+     }
+# 集計ステージ : query2 .... 表示項目のプロジェクション
+query2 = {
+       '$project': { 
+           "_id" : True,
+           "name" : True,
+           "SimScore": {
+              "$meta": "searchScore" 
+           },
+           "content" : True
+       }
+}
+
+results = collection.aggregate(pipeline=[query1,query2])
+
+async for result in results:
+    print(result)
+```
 
 <!--
 墓場
