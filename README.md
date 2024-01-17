@@ -1,4 +1,4 @@
-座学テキストは[コチラ](./xxx.pdf)
+座学テキストは[コチラ](./VectorEssestials.pdf)
 
 # CosmosDBでのベクトル検索 実践編 <BR> (Azure Cosmos DB for MongoDB vCore)
 
