@@ -569,6 +569,7 @@ async for result in results:
     print(result)
 ```
 
+
 <!--
 墓場
 |操作|対象|mongosh|python(Motor)|備考|
