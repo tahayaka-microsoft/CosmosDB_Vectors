@@ -104,6 +104,10 @@
 
 ※　デプロイには通常10分ほど掛かる
 
+- 終了後、「ネットワーク」を選択し、"+ Add 0.0.0.0 - 255.255.255.255"を押下し、保存する
+
+<IMG SRC="assets/NetworkAccess.png" width=400>
+
 ## Cosmos DB for MongoDB vCoreの基本操作
 
 - mongoshでの操作
