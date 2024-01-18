@@ -475,6 +475,7 @@
 ```python
 import os
 import glob
+import time
 
 import asyncio
 import motor.motor_asyncio
@@ -556,14 +557,15 @@ async def main():
     )
     
     # ファイル名をstore_embeddingに引き渡して実行
-    for file in glob.glob('d:\\work\\test1000\\*.txt')[0:100]:
+    for file in glob.glob('/home/hayakawa/test1000/*.txt')[0:10]:
         await store_embedding(file)
+
+    time.sleep(5)
 
 # main()を呼び出す
 
 if __name__ == '__main__':
     asyncio.run(main())
-
 ```
 
 ### ベクトル検索の実行
