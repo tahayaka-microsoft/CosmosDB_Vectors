@@ -383,11 +383,11 @@
               },
               cosmosSearchOptions: {
                 kind: 'vector-ivf',
-                numLists:3,
-                nProbes: 4,
+                numLists:100,
                 similarity: 'COS',
-                dimensions: 3
+                dimensions: 1536
               }
+            }
           ]
         }
       )
@@ -455,9 +455,7 @@
 
 - 環境準備
   - Azure OpenAI Serviceの準備
-    - `text-embedding-ada-002`をデプロイしておく
-  - MongoDB vCoreの準備
-    - `db1.coll_holtest`にベクトルインデックスを設定する
+    - `text-embedding-ada-002`をデプロイしておく(可能であればデプロイ名は"embedding01"に)
 
 - サンプルアプリ
 ```python
@@ -528,8 +526,8 @@ openai = AzureOpenAI(
 
 # MongoDBの設定
 mongo_conn = os.environ['MONGOCONN']
-mongo_db_name = 'vectortest'
-mongo_collection_name = 'vectors'
+mongo_db_name = 'db1'
+mongo_collection_name = 'coll_holtest'
 client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn)
 db = client[mongo_db_name]
 collection = db[mongo_collection_name]
@@ -546,7 +544,7 @@ query1 = {
       '$search': {
         "cosmosSearch": {
             "vector": vector,
-            "path": "embedding",
+            "path": "vectors",
             "k": 2,
           },
           "returnStoredSource": True 
@@ -557,10 +555,11 @@ query2 = {
        '$project': { 
            "_id" : True,
            "name" : True,
+           "num" : True,
            "SimScore": {
               "$meta": "searchScore" 
            },
-           "content" : True
+           "text" : True
        }
 }
 
