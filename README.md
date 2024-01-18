@@ -577,6 +577,7 @@ if __name__ == '__main__':
 import os
 import motor.motor_asyncio
 from openai import AzureOpenAI
+import asyncio
 
 # Azure OpenAIの設定
 openai_key = os.environ['OPENAI_API_KEY']
@@ -595,41 +596,46 @@ client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn)
 db = client[mongo_db_name]
 collection = db[mongo_collection_name]
 
-# テキスト入力
-text_input = "アメリカ大統領選挙"
+async def main(): 
 
-# テキストをベクトルに変換
-vector = openai.embeddings.create(input=text_input,model='embedding01').data[0].embedding
+    # テキスト入力
+    text_input = "アメリカ大統領選挙"
 
-# ベクトルを使用してMongoDBを検索
-# 集計ステージ : query1 .... ベクトル検索
-query1 = {
-      '$search': {
-        "cosmosSearch": {
-            "vector": vector,
-            "path": "vectors",
-            "k": 2,
-          },
-          "returnStoredSource": True 
-      }
-     }
-# 集計ステージ : query2 .... 表示項目のプロジェクション
-query2 = {
-       '$project': { 
-           "_id" : True,
-           "name" : True,
-           "num" : True,
-           "SimScore": {
-              "$meta": "searchScore" 
-           },
-           "text" : True
-       }
-}
+    # テキストをベクトルに変換
+    vector = openai.embeddings.create(input=text_input,model='embedding01').data[0].embedding
 
-results = collection.aggregate(pipeline=[query1,query2])
+    # ベクトルを使用してMongoDBを検索
+    # 集計ステージ : query1 .... ベクトル検索
+    query1 = {
+          '$search': {
+            "cosmosSearch": {
+                "vector": vector,
+                "path": "vectors",
+                "k": 2,
+              },
+              "returnStoredSource": True 
+          }
+         }
+    # 集計ステージ : query2 .... 表示項目のプロジェクション
+    query2 = {
+           '$project': { 
+               "_id" : True,
+               "name" : True,
+               "num" : True,
+               "SimScore": {
+                  "$meta": "searchScore" 
+               },
+               "text" : True
+           }
+    }
 
-async for result in results:
-    print(result)
+    results = collection.aggregate(pipeline=[query1,query2])
+
+    async for result in results:
+        print(result)
+
+if __name__ == '__main__':
+    asyncio.run(main())
 ```
 
 
