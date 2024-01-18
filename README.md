@@ -472,6 +472,8 @@
       `test1000`ディレクトリのパスを記録する(サンプルアプリの書き換えに利用する)
 
 - サンプルアプリ
+  - mongo_conn_strと、main()ループのglob.globのディレクトリ名称を変更
+  
 ```python
 import os
 import glob
@@ -487,7 +489,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 #nest_asyncio.apply()
 
 # MongoDBの設定
-mongo_conn_str = os.environ["MONGOCONN"]  # MongoDBの接続文字列を設定してください
+mongo_conn_str = '<MongoDB接続文字列>'
 db_name = "db1"  # データベース名を設定してください
 collection_name = "coll_holtest"  # コレクション名を設定してください
 
@@ -557,7 +559,7 @@ async def main():
     )
     
     # ファイル名をstore_embeddingに引き渡して実行
-    for file in glob.glob('/home/hayakawa/test1000/*.txt')[0:10]:
+    for file in glob.glob('/home/xxxx/test1000/*.txt')[0:10]: 
         await store_embedding(file)
 
     time.sleep(5)
