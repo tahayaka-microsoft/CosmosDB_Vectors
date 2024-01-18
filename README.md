@@ -126,14 +126,14 @@
   - データベース操作
     |操作|コマンド|備考|
     |----|----|----|
-    |データベースの一覧表示|show dbs||
-    |データベースの切替|use <db名>|存在しない名前の場合は新規データベースに切り替わる。ドキュメントが登録された時点でデータベースができる|
+    |データベースの一覧表示|show dbs|mongosh専用コマンド|
+    |データベースの切替|use <db名>|mongosh専用コマンド<BR>存在しない名前の場合は新規データベースに切り替わる。ドキュメントが登録された時点でデータベースができる|
     |現在のデータベースの表示|db||
     |データベースの削除|db.dropDatabase()|use <db名>ののちに実行|
   - コレクション操作
     |操作|コマンド|備考|
     |----|----|----|
-    |コレクションの一覧表示|show collections|
+    |コレクションの一覧表示|show collections|mongosh専用コマンド|
     |コレクションの作成|db.createCollection()||
     |コレクションの変更|db.\<colls\>.renameCollection()||
     |コレクションの削除|db.\<colls\>.drop()||
@@ -456,13 +456,30 @@
 - 環境準備
   - Azure OpenAI Serviceの準備
     - `text-embedding-ada-002`をデプロイしておく(可能であればデプロイ名は"embedding01"に)
+  - Pythonライブラリの導入
+    - `asyncio`,`motor`,`openai`,`langchain`を必要に応じてインストールする
+    - IDE(VSCode,Spyder,Jupyter)を利用する場合は`nest_asyncio`をインストールする
+  - テストデータのダウンロードと解凍
+    - 任意の場所にて以下を実行する
+      ```sh
+      wget https://github.com/tahayaka-microsoft/CosmosDB_Vectors/raw/main/assets/test1000.tar
+      tar -xvf test1000.tar
+      ```
+      `test1000`ディレクトリのパスを記録する(サンプルアプリの書き換えに利用する)
 
 - サンプルアプリ
 ```python
 import os
+import glob
 
+import asyncio
 import motor.motor_asyncio
 from openai import AzureOpenAI
+
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+#import nest_asyncio
+#nest_asyncio.apply()
 
 # MongoDBの設定
 mongo_conn_str = os.environ["MONGOCONN"]  # MongoDBの接続文字列を設定してください
@@ -484,24 +501,62 @@ mongoclient = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn_str)
 db = mongoclient[db_name]
 collection = db[collection_name]
 
-# Embeddingを取得してMongoDBに保存する非同期関数
-async def store_embedding(text):
-    try:
-        vectors = client.embeddings.create(model=model_name,input=text).data[0].embedding
-        
-    except Exception as e:
-        print (f"Error when calling embeddings.create():[{e}]")
+# ファイルを読みだしてEmbeddingを取得してMongoDBに保存する非同期関数
+async def store_embedding(filename):
 
-    await collection.insert_one({vectors:vectors})
+    with open(filename, 'r',encoding='utf8') as data:
+        text = data.read().replace('\n', '')
         
+    splitter = RecursiveCharacterTextSplitter(chunk_size=5000)
+    chunks = splitter.split_text(text)
+    
+    for num in range(len(chunks)):
+    
+        try:
+            vectors = client.embeddings.create(model=model_name,input=chunks[num]).data[0].embedding
+        
+        except Exception as e:
+            print (f"Error when calling embeddings.create():[{e}]")
+
+        collection.insert_one({"name":filename,"num":num,"vectors":vectors,"text":chunks[num]})
+
+        print(f"{num}:{filename} Inserted : count = {len(chunks)}")
+
 
 # メインの非同期イベントループ
 async def main():
-    sample_text = "Azure OpenAIのEmbedding APIを使ってみましょう。"
-    await store_embedding(sample_text)
 
-# イベントループを実行
-import asyncio
+    # コレクションをクリア
+    await collection.drop()
+    print("Documents Droped : count = " + str(await collection.count_documents({})) )
+
+    #ベクトルインデックス定義
+    await db.command(
+      {
+        "createIndexes": collection_name,
+        "indexes": [
+          {
+            "name": "idx_vectors",
+            "key": {
+              "vectors": "cosmosSearch"
+            },
+            "cosmosSearchOptions": {
+              "kind": 'vector-ivf',
+              "numLists":100,
+              "similarity": 'COS',
+              "dimensions": 1536
+            }
+          }
+        ]
+      }
+    )
+    
+    # ファイル名をstore_embeddingに引き渡して実行
+    for file in glob.glob('d:\\work\\test1000\\*.txt')[0:100]:
+        await store_embedding(file)
+
+# main()を呼び出す
+
 if __name__ == '__main__':
     asyncio.run(main())
 
