@@ -104,6 +104,10 @@
 
 ※　デプロイには通常10分ほど掛かる
 
+- 終了後、「ネットワーク」を選択し、"+ Add 0.0.0.0 - 255.255.255.255"を押下し、保存する
+
+<IMG SRC="assets/NetworkAccess.png" width=400>
+
 ## Cosmos DB for MongoDB vCoreの基本操作
 
 - mongoshでの操作
@@ -126,14 +130,14 @@
   - データベース操作
     |操作|コマンド|備考|
     |----|----|----|
-    |データベースの一覧表示|show dbs||
-    |データベースの切替|use <db名>|存在しない名前の場合は新規データベースに切り替わる。ドキュメントが登録された時点でデータベースができる|
+    |データベースの一覧表示|show dbs|mongosh専用コマンド|
+    |データベースの切替|use <db名>|mongosh専用コマンド<BR>存在しない名前の場合は新規データベースに切り替わる。ドキュメントが登録された時点でデータベースができる|
     |現在のデータベースの表示|db||
     |データベースの削除|db.dropDatabase()|use <db名>ののちに実行|
   - コレクション操作
     |操作|コマンド|備考|
     |----|----|----|
-    |コレクションの一覧表示|show collections|
+    |コレクションの一覧表示|show collections|mongosh専用コマンド|
     |コレクションの作成|db.createCollection()||
     |コレクションの変更|db.\<colls\>.renameCollection()||
     |コレクションの削除|db.\<colls\>.drop()||
@@ -383,11 +387,11 @@
               },
               cosmosSearchOptions: {
                 kind: 'vector-ivf',
-                numLists:3,
-                nProbes: 4,
+                numLists:100,
                 similarity: 'COS',
-                dimensions: 3
+                dimensions: 1536
               }
+            }
           ]
         }
       )
@@ -455,19 +459,37 @@
 
 - 環境準備
   - Azure OpenAI Serviceの準備
-    - `text-embedding-ada-002`をデプロイしておく
-  - MongoDB vCoreの準備
-    - `db1.coll_holtest`にベクトルインデックスを設定する
+    - `text-embedding-ada-002`をデプロイしておく(可能であればデプロイ名は"embedding01"に)
+  - Pythonライブラリの導入
+    - `asyncio`,`motor`,`openai`,`langchain`を必要に応じてインストールする
+    - IDE(VSCode,Spyder,Jupyter)を利用する場合は`nest_asyncio`をインストールする
+  - テストデータのダウンロードと解凍
+    - 任意の場所にて以下を実行する
+      ```sh
+      wget https://github.com/tahayaka-microsoft/CosmosDB_Vectors/raw/main/assets/test1000.tar
+      tar -xvf test1000.tar
+      ```
+      `test1000`ディレクトリのパスを記録する(サンプルアプリの書き換えに利用する)
 
 - サンプルアプリ
+  - mongo_conn_strと、main()ループのglob.globのディレクトリ名称を変更
+  
 ```python
 import os
+import glob
+import time
 
+import asyncio
 import motor.motor_asyncio
 from openai import AzureOpenAI
 
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+#import nest_asyncio
+#nest_asyncio.apply()
+
 # MongoDBの設定
-mongo_conn_str = os.environ["MONGOCONN"]  # MongoDBの接続文字列を設定してください
+mongo_conn_str = '<MongoDB接続文字列>'
 db_name = "db1"  # データベース名を設定してください
 collection_name = "coll_holtest"  # コレクション名を設定してください
 
@@ -486,27 +508,66 @@ mongoclient = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn_str)
 db = mongoclient[db_name]
 collection = db[collection_name]
 
-# Embeddingを取得してMongoDBに保存する非同期関数
-async def store_embedding(text):
-    try:
-        vectors = client.embeddings.create(model=model_name,input=text).data[0].embedding
-        
-    except Exception as e:
-        print (f"Error when calling embeddings.create():[{e}]")
+# ファイルを読みだしてEmbeddingを取得してMongoDBに保存する非同期関数
+async def store_embedding(filename):
 
-    await collection.insert_one({vectors:vectors})
+    with open(filename, 'r',encoding='utf8') as data:
+        text = data.read().replace('\n', '')
         
+    splitter = RecursiveCharacterTextSplitter(chunk_size=5000)
+    chunks = splitter.split_text(text)
+    
+    for num in range(len(chunks)):
+    
+        try:
+            vectors = client.embeddings.create(model=model_name,input=chunks[num]).data[0].embedding
+        
+        except Exception as e:
+            print (f"Error when calling embeddings.create():[{e}]")
+
+        collection.insert_one({"name":filename,"num":num,"vectors":vectors,"text":chunks[num]})
+
+        print(f"{num}:{filename} Inserted : count = {len(chunks)}")
+
 
 # メインの非同期イベントループ
 async def main():
-    sample_text = "Azure OpenAIのEmbedding APIを使ってみましょう。"
-    await store_embedding(sample_text)
 
-# イベントループを実行
-import asyncio
+    # コレクションをクリア
+    await collection.drop()
+    print("Documents Droped : count = " + str(await collection.count_documents({})) )
+
+    #ベクトルインデックス定義
+    await db.command(
+      {
+        "createIndexes": collection_name,
+        "indexes": [
+          {
+            "name": "idx_vectors",
+            "key": {
+              "vectors": "cosmosSearch"
+            },
+            "cosmosSearchOptions": {
+              "kind": 'vector-ivf',
+              "numLists":100,
+              "similarity": 'COS',
+              "dimensions": 1536
+            }
+          }
+        ]
+      }
+    )
+    
+    # ファイル名をstore_embeddingに引き渡して実行
+    for file in glob.glob('/home/xxxx/test1000/*.txt')[0:10]: 
+        await store_embedding(file)
+
+    time.sleep(5)
+
+# main()を呼び出す
+
 if __name__ == '__main__':
     asyncio.run(main())
-
 ```
 
 ### ベクトル検索の実行
@@ -516,6 +577,7 @@ if __name__ == '__main__':
 import os
 import motor.motor_asyncio
 from openai import AzureOpenAI
+import asyncio
 
 # Azure OpenAIの設定
 openai_key = os.environ['OPENAI_API_KEY']
@@ -528,47 +590,54 @@ openai = AzureOpenAI(
 
 # MongoDBの設定
 mongo_conn = os.environ['MONGOCONN']
-mongo_db_name = 'vectortest'
-mongo_collection_name = 'vectors'
+mongo_db_name = 'db1'
+mongo_collection_name = 'coll_holtest'
 client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn)
 db = client[mongo_db_name]
 collection = db[mongo_collection_name]
 
-# テキスト入力
-text_input = "アメリカ大統領選挙"
+async def main(): 
 
-# テキストをベクトルに変換
-vector = openai.embeddings.create(input=text_input,model='embedding01').data[0].embedding
+    # テキスト入力
+    text_input = "アメリカ大統領選挙"
 
-# ベクトルを使用してMongoDBを検索
-# 集計ステージ : query1 .... ベクトル検索
-query1 = {
-      '$search': {
-        "cosmosSearch": {
-            "vector": vector,
-            "path": "embedding",
-            "k": 2,
-          },
-          "returnStoredSource": True 
-      }
-     }
-# 集計ステージ : query2 .... 表示項目のプロジェクション
-query2 = {
-       '$project': { 
-           "_id" : True,
-           "name" : True,
-           "SimScore": {
-              "$meta": "searchScore" 
-           },
-           "content" : True
-       }
-}
+    # テキストをベクトルに変換
+    vector = openai.embeddings.create(input=text_input,model='embedding01').data[0].embedding
 
-results = collection.aggregate(pipeline=[query1,query2])
+    # ベクトルを使用してMongoDBを検索
+    # 集計ステージ : query1 .... ベクトル検索
+    query1 = {
+          '$search': {
+            "cosmosSearch": {
+                "vector": vector,
+                "path": "vectors",
+                "k": 2,
+              },
+              "returnStoredSource": True 
+          }
+         }
+    # 集計ステージ : query2 .... 表示項目のプロジェクション
+    query2 = {
+           '$project': { 
+               "_id" : True,
+               "name" : True,
+               "num" : True,
+               "SimScore": {
+                  "$meta": "searchScore" 
+               },
+               "text" : True
+           }
+    }
 
-async for result in results:
-    print(result)
+    results = collection.aggregate(pipeline=[query1,query2])
+
+    async for result in results:
+        print(result)
+
+if __name__ == '__main__':
+    asyncio.run(main())
 ```
+
 
 <!--
 墓場
