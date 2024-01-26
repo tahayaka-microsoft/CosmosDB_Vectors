@@ -258,12 +258,12 @@
   - サンプルプログラム
     motorを利用してMongoDBに接続し、データを登録するサンプルプログラム
 
+  - プログラム内`<接続文字列>`,``
   ```python
   # asyncio + motor example
 
   import asyncio
   import motor.motor_asyncio
-  import os
 
   # If you run in VSCode/Jupyter/Spyder, 
   # allow nested loop with nest_asyncio.apply()
@@ -272,7 +272,7 @@
   #nest_asyncio.apply()
 
   # Connect to MongoDB
-  client = motor.motor_asyncio.AsyncIOMotorClient(os.environ['MONGOCONN'])
+  client = motor.motor_asyncio.AsyncIOMotorClient('<接続文字列>')
   db = client['testdb']
   collection = db['testcoll']
 
@@ -472,8 +472,8 @@
       `test1000`ディレクトリのパスを記録する(サンプルアプリの書き換えに利用する)
 
 - サンプルアプリ
-  - mongo_conn_strと、main()ループのglob.globのディレクトリ名称を変更
-  
+  - `<MongoDB接続文字列>` `<OpenAIのKEY>` `<OpenAIのEndpoint>`をそれぞれ自身の環境に書き換える
+  - main()ループのglob.globのディレクトリ名称を`test1000`ディレクトリのパスに変更する。
 ```python
 import os
 import glob
@@ -498,9 +498,9 @@ model_name = 'embedding01' # OpenAI Studioでデプロイしたモデルの名�
 # Azure OpenAIのクライアントを生成
     
 client = AzureOpenAI(
-    api_key=os.environ["OPENAI_API_KEY"],  
+    api_key="<OPENAIのKEY>",  
     api_version="2023-12-01-preview",
-    azure_endpoint = os.environ["OPENAI_API_URL"]
+    azure_endpoint = "<OpenAIのEndpoint>"
 )
 
 # MongoDB Clientを生成
@@ -580,8 +580,8 @@ from openai import AzureOpenAI
 import asyncio
 
 # Azure OpenAIの設定
-openai_key = os.environ['OPENAI_API_KEY']
-openai_endpoint = os.environ['OPENAI_API_URL']
+openai_key = '<OPENAIのKEY>'
+openai_endpoint = '<OpenAIのEndpoint>'
 openai = AzureOpenAI(
     azure_endpoint=openai_endpoint,
     api_version='2023-12-01-preview',
@@ -589,7 +589,7 @@ openai = AzureOpenAI(
 
 
 # MongoDBの設定
-mongo_conn = os.environ['MONGOCONN']
+mongo_conn = '<接続文字列>'
 mongo_db_name = 'db1'
 mongo_collection_name = 'coll_holtest'
 client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn)
