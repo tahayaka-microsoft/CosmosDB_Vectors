@@ -589,8 +589,10 @@ if __name__ == '__main__':
 
 ### ベクトル検索の実行
 
-- サンプルアプリ
-- 
+- サンプルアプリ(search.py)
+  - `<OPENAIのKEY>`(7行目),`<OpenAIのEndpoint>`(8行目),`<MongoDB接続文字列>`(16行目)を書き換える
+  - `python search.py`で実行する
+
 ```python
 import os
 import motor.motor_asyncio
@@ -607,7 +609,7 @@ openai = AzureOpenAI(
 
 
 # MongoDBの設定
-mongo_conn = '<接続文字列>'
+mongo_conn = '<MongoDB接続文字列>'
 mongo_db_name = 'db1'
 mongo_collection_name = 'coll_holtest'
 client = motor.motor_asyncio.AsyncIOMotorClient(mongo_conn)
