@@ -476,7 +476,7 @@
   - Azure OpenAI Serviceの準備
     - `text-embedding-ada-002`をデプロイしておく(可能であればデプロイ名は"embedding01"に)
   - Pythonライブラリの導入
-    - `asyncio`,`motor`,`openai`,`langchain`を必要に応じてインストールする
+    - `motor`,`openai`,`langchain`を必要に応じて`pip install`を用いてインストールする
     - IDE(VSCode,Spyder,Jupyter)を利用する場合は`nest_asyncio`をインストールする
   - テストデータのダウンロードと解凍
     - 任意の場所にて以下を実行する
@@ -484,11 +484,13 @@
       wget https://github.com/tahayaka-microsoft/CosmosDB_Vectors/raw/main/assets/test1000.tar
       tar -xvf test1000.tar
       ```
-      `test1000`ディレクトリのパスを記録する(サンプルアプリの書き換えに利用する)
+      `test1000`ディレクトリのパスを記録する(サンプルアプリの書き換えに利用する) `pwd`等を用いる
 
-- サンプルアプリ
-  - `<MongoDB接続文字列>` `<OpenAIのKEY>` `<OpenAIのEndpoint>`をそれぞれ自身の環境に書き換える
-  - main()ループのglob.globのディレクトリ名称を`test1000`ディレクトリのパスに変更する。
+- サンプルアプリ(vectorize.py)
+  - `<MongoDB接続文字列>`(15行目) `<OpenAIのKEY>`(24行目) `<OpenAIのEndpoint>`(26行目)をそれぞれ自身の環境に書き換える
+  - main()ループのglob.globのディレクトリ名称(85行目)を`test1000`ディレクトリのパスに変更する。
+  - `python vectorize.py`で実行する
+
 ```python
 import os
 import glob
@@ -588,6 +590,7 @@ if __name__ == '__main__':
 ### ベクトル検索の実行
 
 - サンプルアプリ
+- 
 ```python
 import os
 import motor.motor_asyncio
