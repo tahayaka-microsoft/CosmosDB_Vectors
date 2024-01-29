@@ -240,11 +240,19 @@
           ]
         )
         ``` 
-        - 合計・平均
+        - 合計・平均 - `_id`が`null`の場合は全体
         ```javascript
         db.orders.aggregate(
           [
               { $group: { _id: null, total: { $sum: '$amount' }, average: { $avg: '$amount' } } }
+          ]
+        )
+        ```
+          - `_id`に`'$status`を設定してグループ化
+        ```javascript
+        db.orders.aggregate(
+          [
+            { $group: { _id: '$status', total: { $sum: '$amount' }, average: { $avg: '$amount' } } }
           ]
         )
         ```
