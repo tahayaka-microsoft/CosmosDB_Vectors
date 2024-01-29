@@ -272,7 +272,8 @@
 
     `python mongodb_test.py`で実行する
 
-  - プログラム内`<接続文字列>`,``
+  - プログラム内`<接続文字列>`を、MongoDB vCoreの接続文字列に変更する。その際、ユーザー名、パスワードを確認する
+
   ```python
   # asyncio + motor example
 
