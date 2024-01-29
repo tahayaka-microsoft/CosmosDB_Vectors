@@ -576,7 +576,7 @@ async def main():
     )
     
     # ファイル名をstore_embeddingに引き渡して実行
-    for file in glob.glob('/home/xxxx/test1000/*.txt')[0:10]: 
+    for file in glob.glob('/home/xxxx/test1000/*.txt')[0:100]: 
         await store_embedding(file)
 
     time.sleep(5)
