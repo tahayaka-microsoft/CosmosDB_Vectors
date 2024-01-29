@@ -657,7 +657,9 @@ async def main():
 if __name__ == '__main__':
     asyncio.run(main())
 ```
-
+> [TIP!]
+> `db.<col>.find().limit(1).forEach(function (doc) { for (var key in doc) { print(key); } });`
+> でドキュメントの項目名を一覧できる
 
 <!--
 墓場
