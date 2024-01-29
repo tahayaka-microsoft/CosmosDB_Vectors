@@ -265,7 +265,9 @@
   ```
 
   - サンプルプログラム
-    motorを利用してMongoDBに接続し、データを登録するサンプルプログラム
+    motorを利用してMongoDBに接続し、データを登録するサンプルプログラム  
+    Azure Cloud Shellから`code mongodb_test.py`を入力してプログラムを保存する
+    `python mongodb_test.py`で実行する
 
   - プログラム内`<接続文字列>`,``
   ```python
