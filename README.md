@@ -142,7 +142,7 @@
         ]);
         ```
         - 以下のように出力されればOK
-        ```JSON
+        ```
         {
           acknowledged: true,
           insertedIds: {
@@ -168,7 +168,7 @@
       `"amount"`が`300以上(Greater Than or Equal)`を指定している
       
       - 結果
-      ```json
+      ```
       [
         {
           _id: ObjectId("6597ae7185a8fea5bb7006bb"),
