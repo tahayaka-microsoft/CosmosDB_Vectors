@@ -130,7 +130,7 @@
 
 
     - サンプルデータの作成とクエリの例
-       - サンプルデータ作成
+      - サンプルデータ作成
         - 以下のプログラムをmongoshから実行する。
         ```javascript
         db.orders.insertMany([
@@ -140,6 +140,19 @@
           { customer_id: 3, amount: 300, status: 'shipped', items: 2 },
           { customer_id: 4, amount: 450, status: 'canceled', items: 5 }
         ]);
+        ```
+        - 以下のように出力されればOK
+        ```JSON
+        {
+          acknowledged: true,
+          insertedIds: {
+            '0': ObjectId("65c1bc42d87de042792fda1b"),
+            '1': ObjectId("65c1bc42d87de042792fda1c"),
+            '2': ObjectId("65c1bc42d87de042792fda1d"),
+            '3': ObjectId("65c1bc42d87de042792fda1e"),
+            '4': ObjectId("65c1bc42d87de042792fda1f")
+          }
+        }
         ```
       - データベース、コレクションの確認
         ```Javascript
