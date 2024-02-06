@@ -539,7 +539,7 @@
 
 - サンプルアプリ(vectorize.py)
   - `<MongoDB接続文字列>`(15行目) `<OpenAIのKEY>`(24行目) `<OpenAIのEndpoint>`(26行目)をそれぞれ自身の環境に書き換える
-  - main()ループのglob.globのディレクトリ名称(85行目)を`test1000`ディレクトリのパスに変更する。
+  - main()ループのglob.globのディレクトリ名称(85行目の`'/home/xxxx/test1000/*.txt'`)を`test1000`ディレクトリのパスに変更する。
   - `python vectorize.py`で実行する
 
 ```python
@@ -557,7 +557,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 #nest_asyncio.apply()
 
 # MongoDBの設定
-mongo_conn_str = '<MongoDB接続文字列>'
+mongo_conn_str = '<接続文字列>'
 db_name = "db1"  # データベース名を設定してください
 collection_name = "coll_holtest"  # コレクション名を設定してください
 
@@ -566,7 +566,7 @@ model_name = 'embedding01' # OpenAI Studioでデプロイしたモデルの名�
 # Azure OpenAIのクライアントを生成
     
 client = AzureOpenAI(
-    api_key="<OPENAIのKEY>",  
+    api_key="<OpenAIのKEY>",  
     api_version="2023-12-01-preview",
     azure_endpoint = "<OpenAIのEndpoint>"
 )
@@ -577,7 +577,7 @@ db = mongoclient[db_name]
 collection = db[collection_name]
 
 # ファイルを読みだしてEmbeddingを取得してMongoDBに保存する非同期関数
-async def store_embedding(filename):
+async def store_embedding(cnt,filename):
 
     with open(filename, 'r',encoding='utf8') as data:
         text = data.read().replace('\n', '')
@@ -595,7 +595,7 @@ async def store_embedding(filename):
 
         collection.insert_one({"name":filename,"num":num,"vectors":vectors,"text":chunks[num]})
 
-        print(f"{num}:{filename} Inserted : count = {len(chunks)}")
+        print(f"{cnt} : {filename} - Chunk[{num+1}/{len(chunks)}] Inserted ")
 
 
 # メインの非同期イベントループ
@@ -627,8 +627,14 @@ async def main():
     )
     
     # ファイル名をstore_embeddingに引き渡して実行
-    for file in glob.glob('/home/xxxx/test1000/*.txt')[0:100]: 
-        await store_embedding(file)
+    files = glob.glob('/home/xxxx/test1000/*.txt')
+    files.sort()
+    files = files[0:100] # 100ファイルのみ
+
+    cnt = 0
+    for file in files :
+        cnt = cnt + 1 
+        await store_embedding(cnt,file)
 
     time.sleep(5)
 
