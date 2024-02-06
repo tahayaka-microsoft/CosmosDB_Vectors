@@ -389,6 +389,24 @@
       asyncio.run(main())
   ```
 
+    - Mongoshにて確認する(任意)
+      - DB一覧を表示する
+      ```
+      show dbs
+      ```
+      - `testdb`に操作を切り替え
+      ```
+      use testdb
+      ```
+      - コレクションを表示
+      ```
+      show collections
+      ```
+      - `testcoll`のデータを表示
+      ```
+      db.testcoll.find()
+      ```
+
   ## Cosmos DB for MongoDB vCoreでのベクトルデータの取り扱い
 
 - ベクトルデータ関連機能
