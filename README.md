@@ -557,7 +557,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 #nest_asyncio.apply()
 
 # MongoDBの設定
-mongo_conn_str = '<接続文字列>'
+mongo_conn_str = '<MongoDB接続文字列>'
 db_name = "db1"  # データベース名を設定してください
 collection_name = "coll_holtest"  # コレクション名を設定してください
 
