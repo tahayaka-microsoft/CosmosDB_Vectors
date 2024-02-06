@@ -518,6 +518,9 @@
 - 環境準備
   - Azure OpenAI Serviceの準備
     - `text-embedding-ada-002`をデプロイしておく(可能であればデプロイ名は"embedding01"に)
+    - Azure OpenAI Serviceの"キーとエンドポイント"から`キー1`と`エンドポイント`の値を控えておく
+    <IMG SRC="assets/OpenAI_Keys.png" width=400>
+    
   - Pythonライブラリの導入
     - `motor`,`openai`,`langchain`を必要に応じて`pip install`を用いてインストールする
     - IDE(VSCode,Spyder,Jupyter)を利用する場合は`nest_asyncio`をインストールする
