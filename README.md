@@ -521,6 +521,8 @@
 - 環境準備
   - Azure OpenAI Serviceの準備
     - `text-embedding-ada-002`をデプロイしておく(可能であればデプロイ名は"embedding01"に)
+    <IMG SRC="assets/OpenAI_Embedding_Deploy.png" width=400>
+    
     - Azure OpenAI Serviceの"キーとエンドポイント"から`キー1`と`エンドポイント`の値を控えておく
     <IMG SRC="assets/OpenAI_Keys.png" width=400>
     
