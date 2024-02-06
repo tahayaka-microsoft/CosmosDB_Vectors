@@ -128,40 +128,9 @@
     ```
     - dbは固定、次の`<col>`はコレクション名を記述する
 
-  - データベース操作
-    |操作|コマンド|備考|
-    |----|----|----|
-    |データベースの一覧表示|show dbs|mongosh専用コマンド|
-    |データベースの切替|use <db名>|mongosh専用コマンド<BR>存在しない名前の場合は新規データベースに切り替わる。ドキュメントが登録された時点でデータベースができる|
-    |現在のデータベースの表示|db||
-    |データベースの削除|db.dropDatabase()|use <db名>ののちに実行|
-  - コレクション操作
-    |操作|コマンド|備考|
-    |----|----|----|
-    |コレクションの一覧表示|show collections|mongosh専用コマンド|
-    |コレクションの作成|db.createCollection()||
-    |コレクションの変更|db.\<colls\>.renameCollection()||
-    |コレクションの削除|db.\<colls\>.drop()||
-  - アイテム操作
-    |操作|コマンド|備考|
-    |----|----|----|
-    |アイテムの作成|db.\<colls\>.insertOne()/insertMany()||
-    |アイテムの検索|db.\<colls\>.find()||
-    |アイテムの更新|db.\<colls\>.updateOne()/updateMany()||
-    |アイテムの削除|db.\<colls\>.deleteOne()/deleteMany()||
-  - 演算子
-    - 演算子はfind()などでフィルタ条件を作成する時に利用する
-        |演算子種類|演算子(例)|備考|
-        |---|---|---|
-        |比較演算子|\$eq,\$gt,\$gte,\$in,\$lt,\$lte,\$ne,\$nin||
-        |論理演算子|\$and,\$not,\$nor,\$or||
-        |要素演算子|\$exists,\$type||
-        |評価演算子|\$expr,\$jsonSchema,\$mod,\$regex,\$text,\$where||
-        |配列演算子|\$all,\$elemMatch,\$size||
-        |投影演算子|\$,\$elemMatch,\$meta,\$slice||
-        |その他演算子|\$comment,\$rand,\$natural||
-    - `db.<colls>.find()`の例
-       - 事前データ作成
+
+    - サンプルデータの作成とクエリの例
+       - サンプルデータ作成
         - 以下のプログラムをmongoshから実行する。
         ```javascript
         db.orders.insertMany([
@@ -172,10 +141,19 @@
           { customer_id: 4, amount: 450, status: 'canceled', items: 5 }
         ]);
         ```
+      - データベース、コレクションの確認
+        ```Javascript
+        show dbs
+        ```
+        ```Javascript
+        show collections
+        ```
       - クエリ実行
       ```JavaScript
       db.orders.find({"amount":{"$gte":300}})
       ```
+      `"amount"`が`300以上(Greater Than or Equal)`を指定している
+      
       - 結果
       ```json
       [
@@ -204,7 +182,7 @@
       ```
   - 集計パイプライン操作
     - 集計パイプラインとは？
-        - 集計パイプラインは、`db.<colls>.aggregate()`で利用されるデータ処理の表現方法
+        - 集計パイプラインは、集計関数である`db.<colls>.aggregate()`で利用されるデータ処理の表現方法
         - 集計パイプラインの構成要素
           - パイプライン
             - パイプラインはステージの配列で表現される
@@ -256,7 +234,39 @@
           ]
         )
         ```
-
+- Mongosh操作コマンド一覧
+  - データベース操作
+    |操作|コマンド|備考|
+    |----|----|----|
+    |データベースの一覧表示|show dbs|mongosh専用コマンド|
+    |データベースの切替|use <db名>|mongosh専用コマンド<BR>存在しない名前の場合は新規データベースに切り替わる。ドキュメントが登録された時点でデータベースができる|
+    |現在のデータベースの表示|db||
+    |データベースの削除|db.dropDatabase()|use <db名>ののちに実行|
+  - コレクション操作
+    |操作|コマンド|備考|
+    |----|----|----|
+    |コレクションの一覧表示|show collections|mongosh専用コマンド|
+    |コレクションの作成|db.createCollection()||
+    |コレクションの変更|db.\<colls\>.renameCollection()||
+    |コレクションの削除|db.\<colls\>.drop()||
+  - アイテム操作
+    |操作|コマンド|備考|
+    |----|----|----|
+    |アイテムの作成|db.\<colls\>.insertOne()/insertMany()||
+    |アイテムの検索|db.\<colls\>.find()||
+    |アイテムの更新|db.\<colls\>.updateOne()/updateMany()||
+    |アイテムの削除|db.\<colls\>.deleteOne()/deleteMany()||
+  - 演算子
+    - 演算子はfind()などでフィルタ条件を作成する時に利用する
+        |演算子種類|演算子(例)|備考|
+        |---|---|---|
+        |比較演算子|\$eq,\$gt,\$gte,\$in,\$lt,\$lte,\$ne,\$nin||
+        |論理演算子|\$and,\$not,\$nor,\$or||
+        |要素演算子|\$exists,\$type||
+        |評価演算子|\$expr,\$jsonSchema,\$mod,\$regex,\$text,\$where||
+        |配列演算子|\$all,\$elemMatch,\$size||
+        |投影演算子|\$,\$elemMatch,\$meta,\$slice||
+        |その他演算子|\$comment,\$rand,\$natural||
 - Pythonでの操作
   - 利用するパッケージ(motor)のインストール
 
