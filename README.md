@@ -291,9 +291,11 @@
 
     motorを利用してMongoDBに接続し、データを登録するサンプルプログラム  
 
-    Azure Cloud Shellから`code mongodb_test.py`を入力してプログラムを保存する
+    Azure Cloud Shellから`code mongodb_test.py`を入力してプログラムを保存する  
+    > Azure Cloud Shellのエディタでプログラムを保存するには右上の「×」ボタンの下の灰色部分に隠しメニューがあるのでクリックして保存を選ぶ
+    > エディタを終了する場合も同様のメニュー操作で選択できる。 (それぞれCtrl-S, Ctrl-Qのショートカットを利用することもできる)
 
-    `python mongodb_test.py`で実行する
+    `python mongodb_test.py`で実行する  
 
   - プログラム内`<接続文字列>`を、MongoDB vCoreの接続文字列に変更する。その際、ユーザー名、パスワードを確認する
 
