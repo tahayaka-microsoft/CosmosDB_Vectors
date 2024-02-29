@@ -114,6 +114,18 @@
   - 接続
     - Azure CosmosDB for MonogDB API vCoreのブレードから、「クイックスタート(Preview)」を選択
     - 画面上部にある、">_ Open MongoDB (vCore) shell"を選択して起動する。パスワード入力が必要。
+   
+  > "Connection Failed"というダイアログが出る場合  
+  > <IMG SRC="assets/connection_failed_mongosh.png" width=400>  
+  > - 以下よりmongoshをダウンロードする
+  > ```sh
+  > wget https://downloads.mongodb.com/compass/mongosh-2.1.5-linux-x64.tgz
+  > tar -zxvf mongosh-2.1.5-linux-x64.tgz
+  > ```
+  > - 上記で解凍したmongoshを起動する。<接続文字列>はMongoDB vCoreのメニュー"接続文字列"にあるものをコピー&ペーストする(user:passwordを適宜入れ替える)  
+  > ```sh
+  > ./mongosh-2.1.5-linux-x64/bin/mongosh "<接続文字列>"
+  > ```
   
   - Mongosh基本
     - JavaScriptメソッドを呼び出す。メソッドの引数にJSONを渡すのが基本。
