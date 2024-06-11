@@ -74,7 +74,7 @@
 |Resource Group|任意||
 |Cluster Name|任意(一意名)||
 |Free Tier|(チェックされていないこと)|リージョンで一つ<BR>ストレージ32GBまで|
-|Location|East US|(Japanは近日追加予定)|
+|Location|Japan East||
 
 <IMG SRC="./assets/CosmosDBAccountSetting1.png" width=600>
 
